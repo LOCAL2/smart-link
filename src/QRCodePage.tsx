@@ -1,9 +1,11 @@
 import { QRCodeCanvas } from 'qrcode.react'
+import { useState } from 'react'
 import './QRCodePage.css'
 
-const SITE_URL = 'https://smart-link-lilac.vercel.app/'
+const SITE_URL = 'https://smart-link-lilac.vercel.app'
 
 function QRCodePage() {
+  const [showModal, setShowModal] = useState(false)
   const handleDownload = () => {
     const canvas = document.querySelector('.qr-code canvas') as HTMLCanvasElement
     if (!canvas) return
@@ -58,7 +60,7 @@ function QRCodePage() {
           <p>สแกน QR Code เพื่อเข้าสู่เว็บไซต์</p>
         </div>
 
-        <div className="qr-code">
+        <div className="qr-code" onClick={() => setShowModal(true)}>
           <div className="qr-wrapper">
             <QRCodeCanvas
               value={SITE_URL}
@@ -72,6 +74,7 @@ function QRCodePage() {
               <img src="/logo.png" alt="Logo" />
             </div>
           </div>
+          <span className="qr-hint">คลิกเพื่อขยาย</span>
         </div>
 
         <div className="qr-url">{SITE_URL}</div>
@@ -87,6 +90,34 @@ function QRCodePage() {
 
         <a href="/" className="back-link">← กลับหน้าหลัก</a>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowModal(false)}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+            <div className="modal-qr">
+              <QRCodeCanvas
+                value={SITE_URL}
+                size={512}
+                level="H"
+                marginSize={2}
+                bgColor="#ffffff"
+                fgColor="#0f172a"
+              />
+              <div className="modal-logo-overlay">
+                <img src="/logo.png" alt="Logo" />
+              </div>
+            </div>
+            <p className="modal-url">{SITE_URL}</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
