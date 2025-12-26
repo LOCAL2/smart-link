@@ -9,23 +9,26 @@ function QRCodePage() {
     if (!canvas) return
 
     const newCanvas = document.createElement('canvas')
-    const size = 1024
+    const size = 2048
     newCanvas.width = size
     newCanvas.height = size
     const ctx = newCanvas.getContext('2d')
     if (!ctx) return
 
+    ctx.imageSmoothingEnabled = false
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0, 0, size, size)
     ctx.drawImage(canvas, 0, 0, size, size)
 
     const logo = new Image()
     logo.crossOrigin = 'anonymous'
     logo.onload = () => {
-      const logoSize = 180
+      const logoSize = 350
       const x = (size - logoSize) / 2
       const y = (size - logoSize) / 2
 
       ctx.beginPath()
-      ctx.arc(size / 2, size / 2, logoSize / 2 + 15, 0, Math.PI * 2)
+      ctx.arc(size / 2, size / 2, logoSize / 2 + 20, 0, Math.PI * 2)
       ctx.fillStyle = 'white'
       ctx.fill()
 
@@ -33,12 +36,14 @@ function QRCodePage() {
       ctx.beginPath()
       ctx.arc(size / 2, size / 2, logoSize / 2, 0, Math.PI * 2)
       ctx.clip()
+      ctx.imageSmoothingEnabled = true
+      ctx.imageSmoothingQuality = 'high'
       ctx.drawImage(logo, x, y, logoSize, logoSize)
       ctx.restore()
 
       const link = document.createElement('a')
       link.download = 'smokedetect-qrcode.png'
-      link.href = newCanvas.toDataURL('image/png')
+      link.href = newCanvas.toDataURL('image/png', 1.0)
       link.click()
     }
     logo.src = '/logo.png'
